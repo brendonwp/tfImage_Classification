@@ -25,6 +25,17 @@ Date: 19 July 2024
 
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import numpy as np
+import sklearn
+from sklearn.metrics import confusion_matrix
+
+import matplotlib
+# Graphical backend to matplotlib
+matplotlib.use('QtAgg')
+import matplotlib.pyplot as plt
+
+import seaborn as sns
+
 import urllib
 import zipfile
 
@@ -51,7 +62,7 @@ import tfLearningRatePlot
 
 ###############
 
-NUM_EPOCHS = 30
+NUM_EPOCHS = 10 # 30
 
 def solution_model():
     # Downloads and extracts the dataset to the directory that
@@ -96,9 +107,27 @@ def solution_model():
     print("\nCalling plot_train_val Plot Function..")
     tfToolkit.plot_train_val(history_fit)
 
-    return model
+    return model, valid
 
 if __name__ == '__main__':
-    model = solution_model()
+    model, valid = solution_model()
 
+    # Generate predictions
+    valid.reset()  # Reset the generator
+    predictions = model.predict(valid, steps=valid.n // valid.batch_size + 1)
+    predicted_classes = np.where(predictions > 0.5, 1, 0).flatten()
 
+    # Get the true labels
+    true_classes = valid.classes
+    class_labels = list(valid.class_indices.keys())
+
+    # Calculate the confusion matrix
+    conf_matrix = confusion_matrix(true_classes, predicted_classes)
+
+    # Plot the confusion matrix
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=class_labels, yticklabels=class_labels)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.show()
