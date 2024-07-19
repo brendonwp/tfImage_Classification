@@ -53,7 +53,7 @@ import tfLearningRatePlot
 
 ###############
 
-NUM_EPOCHS = 10
+NUM_EPOCHS = 30 # 10
 
 def solution_model():
     # Downloads and extracts the dataset to the directory that
@@ -100,11 +100,6 @@ def solution_model():
 
     return model
 
-
-# Note that you'll need to save your model as a .h5 like this.
-# When you press the Submit and Test button, your saved .h5 model will
-# be sent to the testing infrastructure for scoring
-# and the score will be returned to you.
 if __name__ == '__main__':
     model = solution_model()
 

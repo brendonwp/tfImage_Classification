@@ -37,10 +37,6 @@ os.environ["TF_GPU_ALLOCATOR"] = "cuda_malloc_async"
 gpus = tf.config.list_physical_devices(device_type = 'GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
-###############
-
-NUM_EPOCHS = 30
-
 # Appends directory structure to PATH variable
 current_dir = os.path.dirname(__file__)
 common_dir = os.path.abspath(os.path.join(current_dir, '..', '..', 'common', 'utils'))
@@ -48,6 +44,14 @@ data_dir = os.path.abspath(os.path.join(current_dir, '..', 'data'))
 train_data_dir = os.path.abspath(os.path.join(current_dir, '..', 'data', 'train'))
 valdn_data_dir = os.path.abspath(os.path.join(current_dir, '..', 'data', 'validation'))
 sys.path.append(common_dir)
+
+import tfToolkit
+from tfToolkit import customMetricCallback
+import tfLearningRatePlot
+
+###############
+
+NUM_EPOCHS = 30
 
 def solution_model():
     # Downloads and extracts the dataset to the directory that
@@ -83,11 +87,14 @@ def solution_model():
                   # YOUR CODE HERE
                   )
 
-    model.fit(train,
+    history_fit=model.fit(train,
                    epochs=NUM_EPOCHS,
                    verbose=1,
                    validation_data=valid
-    )
+                        )
+
+    print("\nCalling plot_train_val Plot Function..")
+    tfToolkit.plot_train_val(history_fit)
 
     return model
 
