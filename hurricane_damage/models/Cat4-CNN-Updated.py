@@ -64,8 +64,6 @@ def download_and_extract_data():
     with zipfile.ZipFile('satellitehurricaneimages.zip', 'r') as zip_ref:
         zip_ref.extractall()
 
-# This function normalizes the images.
-# COMPLETE THE CODE IN THIS FUNCTION
 def preprocess(image, label):
     # NORMALIZE YOUR IMAGES HERE (HINT: Rescale      by 1/.255)
     ## COMMENT 15 Feb 2024: This makes no sense - you don't normalise
@@ -77,11 +75,6 @@ def preprocess(image, label):
     return image, label
 
 
-# This function loads the data, normalizes and resizes the images, splits it into
-# train and validation sets, defines the model, compiles it and finally
-# trains the model. The trained model is returned from this function.
-
-# COMPLETE THE CODE IN THIS FUNCTION.
 def solution_model():
     # Downloads and extracts the dataset to the directory that
     # contains this file.
@@ -90,45 +83,8 @@ def solution_model():
     IMG_SIZE = 128
     BATCH_SIZE = 64
 
-    # The following code reads the training and validation data from their
-    # respective directories, resizes them into the specified image size
-    # and splits them into batches. You must fill in the image_size
-    # argument for both training and validation data.
-    # HINT: Image size is a tuple
-    # B 7 Feb 2024 Note: The variable "image" referenced in tf.image.resize
-    #   is not yet defined - throws error
-    # image = tf.image.resize(image, size=[image_size, image_size])
-
-#    train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-#        directory='train/', image_size= (IMG_SIZE,IMG_SIZE), batch_size=BATCH_SIZE)
-
-## Original line - replaced with
-#    val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-#        directory='validation/', image_size= (IMG_SIZE,IMG_SIZE), batch_size=BATCH_SIZE)
-
-# Brendon 12 Feb 2024
-#    Output from is a dataset object - see filed code on viewing shape / contents
-#    data_shape = train_ds.shape
-#    print("The data has shape", data_shape)
-#    print("There are ", train_ds[0]," training examples with shape ",
-#            (data_shape[1]), (data_shape[2]))
-
-    # Normalizes train and validation datasets using the
-    # preprocess() function.
-    # Also makes other calls, as evident from the code, to prepare them for
-    # training.
-    # Do not batch or resize the images in the dataset here since it's already
-    # been done previously.
-#    train_ds = train_ds.map(
-#        preprocess, num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(
-#        tf.data.experimental.AUTOTUNE)
-#    val_ds = val_ds.map(
-#        preprocess, num_parallel_calls=tf.data.experimental.AUTOTUNE)
-
-###########################
-    # Recommended changes from Malte
-    # Using an older set of processing commands
-    #  Not creating TF datasets, but rather a python generator
+    # ImageDataGenerator is deprecated. Does not create tf datasets,
+    #   but rather a python generator
     train_datagen = ImageDataGenerator(rescale=1. / 255)
     valid_datagen = ImageDataGenerator(rescale=1. / 255)
     train = train_datagen.flow_from_directory("train", target_size=(IMG_SIZE, IMG_SIZE), batch_size=BATCH_SIZE,
